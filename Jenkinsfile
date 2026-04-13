@@ -1,10 +1,12 @@
 pipeline {
-    agent any  // Use any available agent
+    agent any
 
     tools {
-        maven 'MAVEN'  // Ensure this matches the name configured in Jenkins
+        maven 'MAVEN'   // Change to 'MAVEN' if that's your Jenkins config name
     }
+
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/Dhrithii/devops.git'
@@ -13,73 +15,26 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'  // Run Maven build
+                echo 'Building project...'
+                sh 'mvn clean package'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'  // Run unit tests
+                echo 'Running tests...'
+                sh 'mvn test'
             }
         }
 
-        
-        
-       
         stage('Run Application') {
             steps {
-                // Start the JAR application
-                sh 'java -jar target/MyMavenApp-1.0-SNAPSHOT.jar'
+                echo 'Running application...'
+                
+                // BEST WAY (handles dependencies like Guava automatically)
+                sh 'mvn exec:java -Dexec.mainClass="com.example.App"'
             }
         }
-
-        
-    }
-
-    post {
-        success {
-            echo 'Build and deployment successful!'
-        }
-        failure {
-            echo 'Build failed!'
-        }
-    }
-}pipeline {
-    agent any  // Use any available agent
-
-    tools {
-        maven 'Maven'  // Ensure this matches the name configured in Jenkins
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/Dhanwin007/MavenAdd.git'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'mvn clean package'  // Run Maven build
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'mvn test'  // Run unit tests
-            }
-        }
-
-        
-        
-       
-        stage('Run Application') {
-            steps {
-                // Start the JAR application
-                sh 'java -jar target/MyMavenApp-1.0-SNAPSHOT.jar'
-            }
-        }
-
-        
     }
 
     post {
